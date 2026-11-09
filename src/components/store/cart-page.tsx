@@ -32,7 +32,7 @@ export function CartPage({ items, settings }: { items: PublicMenuItem[]; setting
           <div className="mt-4 rounded-[var(--radius-card)] bg-paper px-4 py-1 shadow-lift">
             <CartLines />
           </div>
-          <Link href="/" className="mt-3 inline-block text-sm font-semibold text-basil">
+          <Link href="/" className="mt-3 inline-block text-sm font-semibold text-basil underline-offset-4 hover:underline">
             Add more items
           </Link>
           <div className="mt-4 rounded-[var(--radius-card)] bg-paper p-4 shadow-lift">
@@ -54,7 +54,7 @@ export function CartPage({ items, settings }: { items: PublicMenuItem[]; setting
                 aria-disabled={short > 0}
                 className={
                   "flex h-14 items-center justify-between rounded-full px-6 font-semibold text-paper shadow-sheet transition " +
-                  (short > 0 ? "pointer-events-none bg-muted/60" : "bg-basil hover:bg-basil-dark")
+                  (short > 0 ? "pointer-events-none bg-muted/60" : "press bg-basil hover:bg-basil-dark")
                 }
               >
                 <span>Checkout</span>

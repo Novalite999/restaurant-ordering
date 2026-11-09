@@ -63,17 +63,33 @@ export function ProgressSteps({ status, type }: { status: OrderStatus; type: "pi
         return (
           <li key={s.key} className="flex flex-col items-center text-center">
             <div className="flex w-full items-center">
-              <span className={clsx("h-1 flex-1 rounded-full", i === 0 ? "invisible" : done ? "bg-basil" : "bg-line")} />
+              <span className={clsx("relative h-1 flex-1 overflow-hidden rounded-full bg-line", i === 0 && "invisible")}>
+                <span
+                  className={clsx("absolute inset-0 origin-left bg-basil", done ? "animate-grow-x" : "scale-x-0")}
+                  style={{ animationDelay: `${i * 260}ms` }}
+                />
+              </span>
               <span
                 className={clsx(
-                  "grid size-8 shrink-0 place-items-center rounded-full border-2 transition",
+                  "relative grid size-8 shrink-0 place-items-center rounded-full border-2 transition-colors duration-500",
                   done ? "border-basil bg-basil text-paper" : "border-line bg-paper text-muted",
                   current && status !== "completed" && "ring-4 ring-basil/20"
                 )}
               >
-                {done ? <Check className="size-4" strokeWidth={3} /> : <span className="text-xs font-bold">{i + 1}</span>}
+                {current && status !== "completed" && (
+                  <span className="absolute -inset-1 animate-ping rounded-full border-2 border-basil/40 [animation-duration:2s]" />
+                )}
+                {done ? <Check className="size-4 animate-pop" strokeWidth={3} /> : <span className="text-xs font-bold">{i + 1}</span>}
               </span>
-              <span className={clsx("h-1 flex-1 rounded-full", i === steps.length - 1 ? "invisible" : reached(steps[i + 1].key) ? "bg-basil" : "bg-line")} />
+              <span className={clsx("relative h-1 flex-1 overflow-hidden rounded-full bg-line", i === steps.length - 1 && "invisible")}>
+                <span
+                  className={clsx(
+                    "absolute inset-0 origin-left bg-basil",
+                    i < steps.length - 1 && reached(steps[i + 1].key) ? "animate-grow-x" : "scale-x-0"
+                  )}
+                  style={{ animationDelay: `${i * 260 + 130}ms` }}
+                />
+              </span>
             </div>
             <span className={clsx("mt-1.5 text-xs font-medium", done ? "text-ink" : "text-muted")}>{s.label}</span>
           </li>

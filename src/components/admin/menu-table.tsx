@@ -55,7 +55,7 @@ export function MenuTable({ items, categories }: { items: MenuItem[]; categories
             <button
               key={k}
               onClick={() => setFilter(k)}
-              className={clsx("rounded-lg px-3 py-1.5 text-sm font-semibold", filter === k ? "bg-ink text-paper" : "text-muted")}
+              className={clsx("press rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors duration-200", filter === k ? "bg-ink text-paper" : "text-muted hover:text-ink")}
             >
               {l}
             </button>
@@ -111,8 +111,8 @@ function Row({ item }: { item: MenuItem }) {
     });
 
   return (
-    <li className={clsx("flex gap-3 rounded-[var(--radius-card)] bg-paper p-3 shadow-lift sm:p-4", pending && "opacity-70")}>
-      <FoodImage src={item.image_url} alt="" className="size-20 shrink-0 rounded-2xl sm:size-24" />
+    <li className={clsx("group lift flex gap-3 rounded-[var(--radius-card)] bg-paper p-3 shadow-lift transition-opacity sm:p-4 animate-fade-in", pending && "opacity-70")}>
+      <FoodImage src={item.image_url} alt="" sizes="96px" className="size-20 shrink-0 rounded-2xl sm:size-24" imgClassName="group-hover:scale-105" />
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">
@@ -166,7 +166,7 @@ function Row({ item }: { item: MenuItem }) {
               })
             }
             className={clsx(
-              "inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition",
+              "press inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors duration-300 hover:brightness-95",
               out ? "bg-chili-soft text-chili" : "bg-basil-soft text-basil-dark"
             )}
             title={available ? "Click to mark out of stock" : "Click to mark in stock"}
@@ -208,7 +208,7 @@ function Row({ item }: { item: MenuItem }) {
                   className={clsx("min-w-16 px-2 text-center text-xs font-bold tabular-nums", low && "text-chili")}
                   title="Set exact quantity"
                 >
-                  {stock} in stock
+                  <span key={stock} className="inline-block animate-pop">{stock}</span> in stock
                 </button>
               )}
               <button disabled={pending} onClick={() => changeStock({ delta: 1 })} className="grid size-7 place-items-center rounded-full bg-ink text-paper" aria-label="Add one">

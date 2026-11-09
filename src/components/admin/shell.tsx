@@ -63,14 +63,14 @@ export function AdminShell({
               key={n.href}
               href={n.href}
               className={clsx(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition",
+                "press group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors duration-200",
                 isActive(n) ? "bg-ink text-paper" : "text-ink-soft hover:bg-mist hover:text-ink"
               )}
             >
-              <n.icon className="size-[18px]" />
+              <n.icon className={clsx("size-[18px] transition-transform duration-200", !isActive(n) && "group-hover:translate-x-0.5 group-hover:scale-110")} />
               {n.label}
               {n.href === "/admin/orders" && count > 0 && (
-                <span className={clsx("ml-auto rounded-full px-2 text-xs font-bold", isActive(n) ? "bg-mustard text-ink" : "bg-basil text-paper")}>
+                <span key={count} className={clsx("ml-auto rounded-full px-2 text-xs font-bold animate-pop", isActive(n) ? "bg-mustard text-ink" : "bg-basil text-paper")}>
                   {count}
                 </span>
               )}
@@ -99,7 +99,7 @@ export function AdminShell({
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-paper/95 px-4 backdrop-blur-md lg:hidden no-print">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-paper px-4 lg:hidden no-print">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon.svg" alt="" className="size-8 rounded-[10px]" />
         <p className="min-w-0 flex-1 truncate font-display font-bold">{storeName}</p>
@@ -112,18 +112,21 @@ export function AdminShell({
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 backdrop-blur-md pb-safe lg:hidden no-print">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper pb-safe lg:hidden no-print">
         <div className="grid grid-cols-5">
           {[nav[0], nav[1], nav[2], nav[3]].map((n) => (
             <Link
               key={n.href}
               href={n.href}
-              className={clsx("relative flex flex-col items-center gap-0.5 pt-2.5 pb-2 text-[11px] font-medium", isActive(n) ? "text-basil" : "text-muted")}
+              className={clsx(
+                "relative flex flex-col items-center gap-0.5 pt-2.5 pb-2 text-[11px] font-medium transition-colors duration-200 active:scale-95",
+                isActive(n) ? "text-basil" : "text-muted"
+              )}
             >
               <n.icon className="size-6" strokeWidth={isActive(n) ? 2.25 : 1.75} />
               {n.label}
               {n.href === "/admin/orders" && count > 0 && (
-                <span className="absolute top-1 left-1/2 ml-2 grid min-w-[18px] place-items-center rounded-full bg-chili px-1 text-[10px] font-bold text-paper">
+                <span key={count} className="absolute top-1 left-1/2 ml-2 grid min-w-[18px] place-items-center rounded-full bg-chili px-1 text-[10px] font-bold text-paper animate-pop">
                   {count}
                 </span>
               )}
@@ -152,7 +155,7 @@ export function MoreMenu({ role }: { role: "owner" | "staff" }) {
   return (
     <div className="space-y-2">
       {items.map((n) => (
-        <Link key={n.href} href={n.href} className="flex items-center gap-3 rounded-2xl bg-paper p-4 font-medium shadow-lift">
+        <Link key={n.href} href={n.href} className="press flex items-center gap-3 rounded-2xl bg-paper p-4 font-medium shadow-lift">
           <n.icon className="size-5 text-basil" />
           {n.label}
         </Link>
@@ -267,7 +270,7 @@ function LiveOrders({ onCount }: { onCount: (n: number) => void }) {
         } catch {}
         if (next) chime();
       }}
-      className="fixed right-4 bottom-24 z-30 grid size-11 place-items-center rounded-full bg-paper text-ink shadow-lift lg:bottom-6 no-print"
+      className="press fixed right-4 bottom-24 z-30 grid size-11 place-items-center rounded-full bg-paper text-ink shadow-lift hover:scale-105 lg:bottom-6 no-print"
       aria-label={sound ? "Mute new-order sound" : "Turn on new-order sound"}
       title={sound ? "New-order sound is on" : "New-order sound is off"}
     >

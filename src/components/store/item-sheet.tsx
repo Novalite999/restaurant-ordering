@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import clsx from "clsx";
 import { X } from "lucide-react";
 import { toast } from "sonner";
 import type { PublicMenuItem } from "@/lib/types";
@@ -19,10 +20,20 @@ export function ItemSheet({
 }) {
   const { add, lines } = useCart();
   const [qty, setQty] = useState(1);
+  const [closing, setClosing] = useState(false);
+  const panel = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ y: number; dy: number } | null>(null);
+
+  // Play the exit animation, then unmount.
+  const close = useCallback(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return onClose();
+    setClosing(true);
+    setTimeout(onClose, 200);
+  }, [onClose]);
 
   useEffect(() => {
     if (!item) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -30,7 +41,7 @@ export function ItemSheet({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [item, onClose]);
+  }, [item, close]);
 
   if (!item) return null;
   const inCart = lines.find((l) => l.id === item.id)?.quantity ?? 0;
@@ -39,20 +50,55 @@ export function ItemSheet({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal aria-label={item.name}>
-      <button className="absolute inset-0 bg-ink/50 animate-fade-in" onClick={onClose} aria-label="Close" />
-      <div className="relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-paper shadow-sheet animate-sheet-up sm:max-w-lg sm:rounded-[28px]">
-        <div className="relative shrink-0">
-          <FoodImage src={item.image_url} alt={item.name} className="aspect-[16/10] w-full" />
+      <button
+        className={clsx("absolute inset-0 bg-ink/50", closing ? "animate-fade-out" : "animate-fade-in")}
+        onClick={close}
+        aria-label="Close"
+      />
+      <div
+        ref={panel}
+        className={clsx(
+          "relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-paper shadow-sheet will-change-transform sm:max-w-lg sm:rounded-[28px]",
+          closing ? "animate-sheet-down sm:animate-modal-out" : "animate-sheet-up sm:animate-modal-in"
+        )}
+      >
+        {/* Drag the photo down to dismiss, like a native sheet */}
+        <div
+          className="relative shrink-0 touch-pan-x"
+          onTouchStart={(e) => (drag.current = { y: e.touches[0].clientY, dy: 0 })}
+          onTouchMove={(e) => {
+            if (!drag.current || !panel.current) return;
+            const dy = Math.max(0, e.touches[0].clientY - drag.current.y);
+            drag.current.dy = dy;
+            panel.current.style.transform = `translateY(${dy}px)`;
+          }}
+          onTouchEnd={() => {
+            const d = drag.current;
+            drag.current = null;
+            if (!panel.current || !d) return;
+            if (d.dy > 90) return onClose();
+            panel.current.style.transition = "transform 0.25s cubic-bezier(0.2,0.9,0.25,1)";
+            panel.current.style.transform = "";
+            setTimeout(() => panel.current && (panel.current.style.transition = ""), 260);
+          }}
+        >
+          <FoodImage
+            src={item.image_url}
+            alt={item.name}
+            sizes="(min-width: 640px) 512px, 100vw"
+            eager
+            className="aspect-[16/10] w-full"
+          />
           <span className="absolute top-2 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-paper/80 sm:hidden" />
           <button
-            onClick={onClose}
-            className="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-paper/95 shadow-lift"
+            onClick={close}
+            className="press absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-paper/95 shadow-lift hover:rotate-90 hover:bg-paper"
             aria-label="Close"
           >
             <X className="size-5" />
           </button>
           {off > 0 && (
-            <span className="absolute bottom-3 left-4 rounded-full bg-mustard px-3 py-1 text-sm font-bold text-ink">
+            <span className="absolute bottom-3 left-4 rounded-full bg-mustard px-3 py-1 text-sm font-bold text-ink animate-pop">
               Save {off}%
             </span>
           )}
@@ -86,12 +132,12 @@ export function ItemSheet({
                 onClick={() => {
                   add(item, qty);
                   toast.success(`Added ${qty} × ${item.name}`);
-                  onClose();
+                  close();
                 }}
-                className="flex h-13 flex-1 items-center justify-between rounded-full bg-basil px-5 font-semibold text-paper transition hover:bg-basil-dark active:scale-[0.98] disabled:opacity-40"
+                className="press flex h-13 flex-1 items-center justify-between rounded-full bg-basil px-5 font-semibold text-paper shadow-[0_8px_20px_-8px_rgb(30_107_71/0.6)] hover:bg-basil-dark disabled:opacity-40"
               >
                 <span>{max === 0 ? "Max in cart" : "Add to order"}</span>
-                <span className="tabular-nums">{money(effectivePrice(item) * qty)}</span>
+                <span key={qty} className="inline-block tabular-nums animate-pop">{money(effectivePrice(item) * qty)}</span>
               </button>
             </>
           ) : (

@@ -38,23 +38,26 @@ export default function MyOrders() {
       {rows === null ? (
         <div className="mt-6 space-y-3">
           {[0, 1].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-[var(--radius-card)] bg-paper" />
+            <div key={i} className="skeleton h-24 rounded-[var(--radius-card)]" />
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <div className="mt-6 flex flex-col items-center rounded-[var(--radius-card)] bg-paper px-6 py-12 text-center shadow-lift">
+        <div className="mt-6 flex flex-col items-center rounded-[var(--radius-card)] bg-paper px-6 py-12 text-center shadow-lift animate-rise">
           <ReceiptText className="size-9 text-muted" strokeWidth={1.5} />
           <p className="mt-3 font-display text-lg font-semibold">No orders yet</p>
           <p className="mt-1 text-sm text-muted">When you order, you can track it here.</p>
-          <Link href="/" className="mt-5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper">
+          <Link href="/" className="press mt-5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper hover:bg-ink-soft">
             Start an order
           </Link>
         </div>
       ) : (
         <ul className="mt-5 space-y-3">
-          {rows.map((o) => (
-            <li key={o.id}>
-              <Link href={`/order/${o.id}`} className="flex items-center gap-3 rounded-[var(--radius-card)] bg-paper p-4 shadow-lift">
+          {rows.map((o, i) => (
+            <li key={o.id} className="reveal" style={{ "--i": i } as React.CSSProperties}>
+              <Link
+                href={`/order/${o.id}`}
+                className="lift press group flex items-center gap-3 rounded-[var(--radius-card)] bg-paper p-4 shadow-lift"
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-display font-bold">#{o.order_number}</span>
@@ -76,7 +79,7 @@ export default function MyOrders() {
                     {formatDateTime(o.created_at)}, {money(o.total_cents)}
                   </p>
                 </div>
-                <ChevronRight className="size-5 text-muted" />
+                <ChevronRight className="size-5 text-muted transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </li>
           ))}

@@ -24,17 +24,69 @@
   --shadow-lift: 0 1px 2px rgb(23 37 31 / 0.06), 0 8px 24px -12px rgb(23 37 31 / 0.18);
   --shadow-sheet: 0 -12px 40px -12px rgb(23 37 31 / 0.25);
 
-  --animate-sheet-up: sheet-up 0.32s cubic-bezier(0.2, 0.9, 0.25, 1);
+  --ease-out-soft: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --animate-sheet-up: sheet-up 0.34s var(--ease-out-soft);
+  --animate-sheet-down: sheet-down 0.22s ease-in forwards;
+  --animate-modal-in: modal-in 0.26s var(--ease-out-soft);
+  --animate-modal-out: modal-out 0.18s ease-in forwards;
   --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-fade-out: fade-out 0.2s ease-in forwards;
   --animate-pop: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  --animate-rise: rise 0.5s var(--ease-out-soft) backwards;
+  --animate-print: print 0.9s cubic-bezier(0.25, 0.8, 0.3, 1) backwards;
+  --animate-slide-in: slide-in 0.45s var(--ease-out-soft) backwards;
+  --animate-shimmer: shimmer 1.3s linear infinite;
+  --animate-ping-once: ping-once 0.6s ease-out;
+  --animate-grow-x: grow-x 0.4s ease-out backwards;
 
   @keyframes sheet-up {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
   }
+  @keyframes sheet-down {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes modal-out {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(8px) scale(0.98); }
+  }
   @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
+  }
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  /* Receipt feeding out of the printer */
+  @keyframes print {
+    from { clip-path: inset(0 0 100% 0); transform: translateY(-18px); }
+    to { clip-path: inset(0 0 -20px 0); transform: none; }
+  }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes shimmer {
+    from { background-position: 150% 0; }
+    to { background-position: -50% 0; }
+  }
+  @keyframes grow-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes ping-once {
+    0% { box-shadow: 0 0 0 0 rgb(30 107 71 / 0.45); }
+    100% { box-shadow: 0 0 0 12px rgb(30 107 71 / 0); }
   }
   @keyframes pop {
     0% { transform: scale(1); }
@@ -60,6 +112,42 @@ body {
   outline-offset: 2px;
 }
 
+/* Staggered page-load reveal: set --i on each element (capped so long lists don't wait). */
+@utility reveal {
+  animation: var(--animate-rise);
+  animation-delay: calc(min(var(--i, 0), 10) * 45ms);
+}
+
+/* Route change: content fades in so navigation never feels like a hard cut. */
+@utility page-in {
+  animation: fade-in 0.22s ease-out both;
+}
+
+@utility skeleton {
+  background: linear-gradient(90deg, var(--color-line) 0%, #eef1ee 40%, var(--color-line) 80%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Card lift on devices that can hover (transform/shadow only: GPU-cheap) */
+@utility lift {
+  transition: transform 0.25s var(--ease-out-soft), box-shadow 0.25s var(--ease-out-soft);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 4px rgb(23 37 31 / 0.06), 0 18px 36px -16px rgb(23 37 31 / 0.28);
+    }
+  }
+}
+
+@utility press {
+  transition-property: transform, background-color, color, box-shadow, opacity;
+  transition-duration: 0.15s;
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
@@ -75,8 +163,11 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .lift:hover, .press:active { transform: none; }
 }
 
 @media print {

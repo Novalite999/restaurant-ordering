@@ -107,7 +107,7 @@ export function ItemForm({ item, categories, uploads }: { item?: MenuItem; categ
       <div className="space-y-4">
         <Panel title="Photo">
           <div className="space-y-3 p-4 sm:p-5">
-            <FoodImage src={preview || null} alt="" className="aspect-[4/3] w-full rounded-2xl" />
+            <FoodImage key={preview} src={preview || null} alt="" sizes="320px" className="aspect-[4/3] w-full rounded-2xl" />
             {uploads && (
               <label className={clsx(btn.ghost, "w-full cursor-pointer")}>
                 <ImagePlus className="size-4" /> Upload photo

@@ -4,7 +4,7 @@ import { PAYMENT_LABEL, STATUS_LABEL } from "@/lib/format";
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-5 pb-4 lg:px-8 lg:pt-8">
+    <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-5 pb-4 animate-rise lg:px-8 lg:pt-8">
       <div>
         <h1 className="font-display text-[28px] leading-tight font-extrabold tracking-tight lg:text-3xl">{title}</h1>
         {subtitle && <p className="mt-0.5 text-sm text-muted">{subtitle}</p>}
@@ -40,7 +40,7 @@ const STATUS_STYLE: Record<OrderStatus, string> = {
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
   return (
-    <span className={clsx("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap", STATUS_STYLE[status])}>
+    <span className={clsx("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap transition-colors duration-300", STATUS_STYLE[status])}>
       {STATUS_LABEL[status]}
     </span>
   );
@@ -61,17 +61,17 @@ export function PaymentBadge({ status }: { status: PaymentStatus }) {
 
 export const btn = {
   primary:
-    "inline-flex h-10 items-center justify-center gap-2 rounded-full bg-ink px-4 text-sm font-semibold text-paper transition hover:bg-ink-soft disabled:opacity-50",
+    "press inline-flex h-10 items-center justify-center gap-2 rounded-full bg-ink px-4 text-sm font-semibold text-paper hover:bg-ink-soft disabled:opacity-50",
   green:
-    "inline-flex h-10 items-center justify-center gap-2 rounded-full bg-basil px-4 text-sm font-semibold text-paper transition hover:bg-basil-dark disabled:opacity-50",
+    "press inline-flex h-10 items-center justify-center gap-2 rounded-full bg-basil px-4 text-sm font-semibold text-paper hover:bg-basil-dark hover:shadow-[0_8px_18px_-8px_rgb(30_107_71/0.7)] disabled:opacity-50",
   ghost:
-    "inline-flex h-10 items-center justify-center gap-2 rounded-full border border-line bg-paper px-4 text-sm font-semibold transition hover:border-ink/30 disabled:opacity-50",
+    "press inline-flex h-10 items-center justify-center gap-2 rounded-full border border-line bg-paper px-4 text-sm font-semibold hover:border-ink/30 hover:bg-mist/50 disabled:opacity-50",
   danger:
-    "inline-flex h-10 items-center justify-center gap-2 rounded-full bg-chili px-4 text-sm font-semibold text-paper transition hover:brightness-95 disabled:opacity-50",
+    "press inline-flex h-10 items-center justify-center gap-2 rounded-full bg-chili px-4 text-sm font-semibold text-paper hover:brightness-95 disabled:opacity-50",
 };
 
 export const input =
-  "h-11 w-full rounded-xl border border-line bg-paper px-3.5 text-[15px] outline-none transition focus:border-basil";
+  "h-11 w-full rounded-xl border border-line bg-paper px-3.5 text-[15px] outline-none transition-[border-color,box-shadow] hover:border-ink/25 focus:border-basil focus:shadow-[0_0_0_4px_rgb(30_107_71/0.12)]";
 
 export function Field({ label, hint, children, className }: { label: string; hint?: string; children: React.ReactNode; className?: string }) {
   return (

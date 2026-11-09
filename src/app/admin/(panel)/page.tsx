@@ -80,7 +80,7 @@ export default async function Overview() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 [&>*]:reveal [&>*:nth-child(2)]:[--i:1] [&>*:nth-child(3)]:[--i:2] [&>*:nth-child(4)]:[--i:3]">
           <Kpi label="Sales today" value={money(k.today_rev)} note={diff == null ? "No sales yesterday" : `${diff >= 0 ? "+" : ""}${diff}% vs yesterday`} />
           <Kpi label="Orders today" value={String(k.today_orders)} />
           <Kpi label="In the kitchen" value={String(k.active)} href="/admin/orders" highlight={k.active > 0} />
@@ -116,7 +116,7 @@ export default async function Overview() {
               <ul className="divide-y divide-line">
                 {recent.map((o) => (
                   <li key={o.id}>
-                    <Link href={`/admin/orders/${o.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-mist/60">
+                    <Link href={`/admin/orders/${o.id}`} className="flex items-center gap-3 px-5 py-3 transition-colors duration-150 hover:bg-mist/60">
                       <span className="w-20 font-display font-bold">#{o.order_number}</span>
                       <span className="min-w-0 flex-1 truncate text-sm">
                         {o.customer_name}
@@ -159,7 +159,7 @@ export default async function Overview() {
 
 function Kpi({ label, value, note, href, highlight }: { label: string; value: string; note?: string; href?: string; highlight?: boolean }) {
   const body = (
-    <div className={"h-full rounded-[var(--radius-card)] p-4 shadow-lift sm:p-5 " + (highlight ? "bg-basil text-paper" : "bg-paper")}>
+    <div className={"lift h-full rounded-[var(--radius-card)] p-4 shadow-lift sm:p-5 " + (highlight ? "bg-basil text-paper" : "bg-paper")}>
       <p className={"text-sm " + (highlight ? "text-paper/75" : "text-muted")}>{label}</p>
       <p className="mt-1 font-display text-2xl font-extrabold tracking-tight tabular-nums sm:text-3xl">{value}</p>
       {note && <p className={"mt-1 text-xs " + (highlight ? "text-paper/75" : "text-muted")}>{note}</p>}

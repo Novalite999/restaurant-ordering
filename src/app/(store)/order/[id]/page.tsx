@@ -35,7 +35,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
     <main className="mx-auto max-w-lg px-4 pt-6">
       <OrderLive id={o.id} status={o.status} paid={paid} justPaid={!!sessionId} />
 
-      <div className="ticket-edge bg-paper px-5 pt-6 pb-10 shadow-lift">
+      <div className="ticket-edge animate-print bg-paper px-5 pt-6 pb-10 shadow-lift">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-muted">Order number</p>
@@ -118,11 +118,11 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
         </div>
       </div>
 
-      <div className="mt-6 flex gap-3">
-        <Link href="/" className="flex h-12 flex-1 items-center justify-center rounded-full bg-ink font-semibold text-paper">
+      <div className="mt-6 flex gap-3 reveal" style={{ "--i": 8 } as React.CSSProperties}>
+        <Link href="/" className="press flex h-12 flex-1 items-center justify-center rounded-full bg-ink font-semibold text-paper hover:bg-ink-soft">
           Order more
         </Link>
-        <Link href="/orders" className="flex h-12 flex-1 items-center justify-center rounded-full bg-paper font-semibold shadow-lift">
+        <Link href="/orders" className="press lift flex h-12 flex-1 items-center justify-center rounded-full bg-paper font-semibold shadow-lift">
           All my orders
         </Link>
       </div>

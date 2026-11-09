@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronLeft, Lock, ShoppingBag, Store, Truck } from "lucide-react";
+import { ChevronLeft, Loader2, Lock, ShoppingBag, Store, Truck } from "lucide-react";
 import clsx from "clsx";
 import { toast } from "sonner";
 import type { PublicMenuItem, Settings } from "@/lib/types";
@@ -157,8 +157,8 @@ export function CheckoutForm({
                     key={t}
                     onClick={() => setType(t)}
                     className={clsx(
-                      "flex items-center justify-center gap-2 rounded-xl py-3 font-semibold transition",
-                      type === t ? "bg-paper shadow-lift" : "text-muted"
+                      "press flex items-center justify-center gap-2 rounded-xl py-3 font-semibold transition-[background-color,color,box-shadow,transform] duration-200",
+                      type === t ? "bg-paper shadow-lift" : "text-muted hover:text-ink"
                     )}
                     aria-pressed={type === t}
                   >
@@ -190,7 +190,7 @@ export function CheckoutForm({
           </Card>
 
           {type === "delivery" && (
-            <Card title="Delivery address">
+            <Card title="Delivery address" className="animate-rise">
               <div className="grid grid-cols-6 gap-3">
                 <Field label="Street address" error={errors.address_line1} className="col-span-6">
                   <input autoComplete="address-line1" value={f.address_line1} onChange={set("address_line1")} />
@@ -221,7 +221,7 @@ export function CheckoutForm({
                   onClick={() => setTip(t)}
                   aria-pressed={tip === t}
                   className={clsx(
-                    "rounded-2xl border py-2.5 text-center transition",
+                    "press rounded-2xl border py-2.5 text-center transition-colors duration-200",
                     tip === t ? "border-ink bg-ink text-paper" : "border-line bg-paper hover:border-ink/40"
                   )}
                 >
@@ -245,7 +245,7 @@ export function CheckoutForm({
             <ul className="space-y-2.5">
               {cart.lines.map((l) => (
                 <li key={l.id} className="flex items-center gap-3 text-sm">
-                  <FoodImage src={l.image_url} alt="" className="size-10 shrink-0 rounded-lg" />
+                  <FoodImage src={l.image_url} alt="" sizes="40px" className="size-10 shrink-0 rounded-lg" />
                   <span className="min-w-0 flex-1">
                     <span className="font-semibold">{l.quantity}×</span> {l.name}
                   </span>
@@ -261,7 +261,7 @@ export function CheckoutForm({
               {totals.tip > 0 && <Row label={`Tip (${tip}%)`} value={money(totals.tip)} />}
               <div className="flex justify-between border-t border-line pt-2.5 text-lg font-bold">
                 <dt>Total</dt>
-                <dd className="tabular-nums">{money(totals.total)}</dd>
+                <dd key={totals.total} className="tabular-nums animate-fade-in">{money(totals.total)}</dd>
               </div>
             </dl>
             {short > 0 && (
@@ -277,9 +277,9 @@ export function CheckoutForm({
             <button
               type="submit"
               disabled={blocked || busy || !cart.ready}
-              className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-full bg-basil text-[17px] font-semibold text-paper transition hover:bg-basil-dark active:scale-[0.99] disabled:opacity-40"
+              className="press group mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-full bg-basil text-[17px] font-semibold text-paper shadow-[0_10px_24px_-10px_rgb(30_107_71/0.7)] hover:bg-basil-dark disabled:opacity-40 disabled:shadow-none"
             >
-              <Lock className="size-4" />
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />}
               {busy ? "Opening secure payment…" : `Pay ${money(totals.total)}`}
             </button>
             <p className="mt-2.5 text-center text-xs text-muted">
@@ -292,9 +292,9 @@ export function CheckoutForm({
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
-    <section className="rounded-[var(--radius-card)] bg-paper p-4 shadow-lift sm:p-5">
+    <section className={clsx("rounded-[var(--radius-card)] bg-paper p-4 shadow-lift sm:p-5", className)}>
       <h2 className="mb-3 font-display text-lg font-bold">{title}</h2>
       {children}
     </section>
@@ -319,7 +319,7 @@ function Field({
       <span className="mb-1 block text-sm font-medium text-ink-soft">{label}</span>
       <span
         className={clsx(
-          "block [&>input]:h-12 [&>input]:w-full [&>input]:rounded-xl [&>input]:border [&>input]:bg-paper [&>input]:px-3.5 [&>input]:text-[16px] [&>input]:outline-none [&>input]:transition",
+          "block [&>input]:h-12 [&>input]:w-full [&>input]:rounded-xl [&>input]:border [&>input]:bg-paper [&>input]:px-3.5 [&>input]:text-[16px] [&>input]:outline-none [&>input]:transition-[border-color,box-shadow] [&>input]:focus:shadow-[0_0_0_4px_rgb(30_107_71/0.12)]",
           "[&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:px-3.5 [&>textarea]:py-3 [&>textarea]:text-[16px] [&>textarea]:outline-none",
           error
             ? "[&>input]:border-chili [&>textarea]:border-chili"

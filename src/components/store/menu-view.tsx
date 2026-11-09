@@ -83,7 +83,7 @@ export function MenuView({
     <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-8 lg:px-4 lg:pt-6">
       <main className="min-w-0">
         {/* Store intro */}
-        <section className="bg-paper px-4 pt-5 pb-4 lg:rounded-[var(--radius-card)] lg:p-7 lg:shadow-lift">
+        <section className="reveal bg-paper px-4 pt-5 pb-4 lg:rounded-[var(--radius-card)] lg:p-7 lg:shadow-lift">
           <h1 className="font-display text-[clamp(1.9rem,5vw,3rem)] leading-[1.02] font-extrabold tracking-tight text-balance">
             {settings.tagline}
           </h1>
@@ -92,7 +92,7 @@ export function MenuView({
               We&apos;re not taking online orders right now. You can still browse the menu.
             </p>
           )}
-          <div className="mt-4 flex flex-wrap gap-2 text-sm">
+          <div className="reveal mt-4 flex flex-wrap gap-2 text-sm" style={{ "--i": 2 } as React.CSSProperties}>
             {settings.pickup_enabled && (
               <InfoChip icon={<Clock className="size-4" />}>Pickup in about {settings.prep_time_minutes} min</InfoChip>
             )}
@@ -101,17 +101,17 @@ export function MenuView({
             )}
             <InfoChip icon={<MapPin className="size-4" />}>{settings.address}</InfoChip>
           </div>
-          <label className="relative mt-4 block">
+          <label className="reveal relative mt-4 block" style={{ "--i": 3 } as React.CSSProperties}>
             <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               type="search"
               placeholder="Search dishes, drinks, desserts"
-              className="h-12 w-full rounded-full border border-line bg-mist pr-11 pl-12 text-[16px] outline-none transition placeholder:text-muted focus:border-basil focus:bg-paper"
+              className="h-12 w-full rounded-full border border-line bg-mist pr-11 pl-12 text-[16px] outline-none transition placeholder:text-muted focus:border-basil focus:bg-paper focus:shadow-[0_0_0_4px_rgb(30_107_71/0.12)]"
             />
             {q && (
-              <button onClick={() => setQ("")} className="absolute top-1/2 right-3 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-line" aria-label="Clear search">
+              <button onClick={() => setQ("")} className="absolute top-1/2 right-3 grid size-7 -translate-y-1/2 place-items-center rounded-full bg-line animate-fade-in transition hover:bg-muted/30" aria-label="Clear search">
                 <X className="size-4" />
               </button>
             )}
@@ -120,7 +120,7 @@ export function MenuView({
 
         {/* Category chips */}
         {!q && sections.length > 1 && (
-          <div className="sticky top-14 z-20 border-b border-line/70 bg-mist/95 backdrop-blur-md lg:top-16 lg:mt-4 lg:rounded-full lg:border lg:bg-paper/95">
+          <div className="sticky top-14 z-20 border-b border-line/70 bg-mist lg:top-16 lg:mt-4 lg:rounded-full lg:border lg:bg-paper lg:shadow-sm">
             <div ref={chipsRef} className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-2.5 lg:px-2 lg:py-2">
               {sections.map((s) => (
                 <a
@@ -129,8 +129,8 @@ export function MenuView({
                   href={`#cat-${s.id}`}
                   onClick={() => setActive(s.id)}
                   className={clsx(
-                    "shrink-0 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition",
-                    active === s.id ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:text-ink lg:bg-transparent"
+                    "press shrink-0 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors duration-200",
+                    active === s.id ? "bg-ink text-paper" : "bg-paper text-ink-soft hover:bg-line/60 hover:text-ink lg:bg-transparent"
                   )}
                 >
                   {s.name}
@@ -145,14 +145,22 @@ export function MenuView({
           <section className="pt-6">
             <h2 className="px-4 font-display text-xl font-bold tracking-tight lg:px-0">Today&apos;s favorites</h2>
             <div className="no-scrollbar mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 lg:px-0">
-              {featured.map((i) => (
+              {featured.map((i, idx) => (
                 <button
                   key={i.id}
                   onClick={() => setOpen(i)}
-                  className="group relative w-[74%] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[var(--radius-card)] bg-ink text-left text-paper sm:w-[300px]"
+                  style={{ "--i": idx + 3 } as React.CSSProperties}
+                  className="reveal lift press group relative w-[74%] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[var(--radius-card)] bg-ink text-left text-paper sm:w-[300px]"
                 >
-                  <FoodImage src={i.image_url} alt={i.name} className="aspect-[4/3] w-full opacity-90 transition duration-500 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+                  <FoodImage
+                    src={i.image_url}
+                    alt={i.name}
+                    sizes="300px"
+                    eager={idx < 2}
+                    className="aspect-[4/3] w-full"
+                    imgClassName="group-hover:scale-[1.06]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/25 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
                   {percentOff(i) > 0 && (
                     <span className="absolute top-3 left-3 rounded-full bg-mustard px-2.5 py-1 text-xs font-bold text-ink">
                       Save {percentOff(i)}%
@@ -174,12 +182,19 @@ export function MenuView({
             {q ? <>Nothing matches &ldquo;{q}&rdquo;. Try another word.</> : "The menu is being updated. Check back soon."}
           </p>
         )}
-        {sections.map((s) => (
+        {sections.map((s, si) => (
           <section key={s.id} id={`cat-${s.id}`} data-cat={s.id} className="pt-7">
             <h2 className="px-4 font-display text-xl font-bold tracking-tight lg:px-0">{s.name}</h2>
             <div className="mt-3 grid gap-px bg-line sm:gap-3 sm:bg-transparent sm:px-4 md:grid-cols-2 lg:px-0">
-              {s.items.map((i) => (
-                <ItemRow key={i.id} item={i} onOpen={() => setOpen(i)} onAdd={() => quickAdd(i)} canOrder={canOrder} />
+              {s.items.map((i, idx) => (
+                <ItemRow
+                  key={i.id}
+                  item={i}
+                  index={si === 0 ? idx + 4 : -1}
+                  onOpen={() => setOpen(i)}
+                  onAdd={() => quickAdd(i)}
+                  canOrder={canOrder}
+                />
               ))}
             </div>
           </section>
@@ -203,7 +218,7 @@ export function MenuView({
               </div>
               <Link
                 href="/checkout"
-                className="mt-4 flex h-12 items-center justify-center rounded-full bg-basil font-semibold text-paper transition hover:bg-basil-dark"
+                className="press mt-4 flex h-12 items-center justify-center rounded-full bg-basil font-semibold text-paper transition-colors hover:bg-basil-dark"
               >
                 Go to checkout
               </Link>
@@ -217,7 +232,7 @@ export function MenuView({
         <div className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-30 px-3 pb-2 lg:hidden">
           <Link
             href="/cart"
-            className="mx-auto flex h-14 max-w-md items-center justify-between rounded-full bg-basil pr-5 pl-2 text-paper shadow-sheet animate-fade-in"
+            className="press mx-auto flex h-14 max-w-md items-center justify-between rounded-full bg-basil pr-5 pl-2 text-paper shadow-sheet animate-rise"
           >
             <span key={cart.bump} className="grid size-10 place-items-center rounded-full bg-paper/15 font-bold animate-pop">
               {cart.count}
@@ -244,27 +259,34 @@ function InfoChip({ icon, children }: { icon: React.ReactNode; children: React.R
 
 function ItemRow({
   item,
+  index,
   onOpen,
   onAdd,
   canOrder,
 }: {
   item: PublicMenuItem;
+  /** Position for the page-load stagger; -1 = no entrance animation. */
+  index: number;
   onOpen: () => void;
   onAdd: () => void;
   canOrder: boolean;
 }) {
   const { lines } = useCart();
   const inCart = lines.find((l) => l.id === item.id)?.quantity ?? 0;
+  const [flash, setFlash] = useState(0);
   return (
     <div
+      style={index >= 0 ? ({ "--i": index } as React.CSSProperties) : undefined}
       className={clsx(
-        "relative flex gap-4 bg-paper p-4 transition sm:rounded-[var(--radius-card)] sm:shadow-lift",
+        "group relative flex gap-4 bg-paper p-4 transition-colors active:bg-mist/60 sm:rounded-[var(--radius-card)] sm:shadow-lift sm:active:bg-paper",
+        item.in_stock && "sm:lift",
+        index >= 0 && "reveal",
         !item.in_stock && "opacity-60"
       )}
     >
       <button onClick={onOpen} className="absolute inset-0 z-0 sm:rounded-[var(--radius-card)]" aria-label={`View ${item.name}`} />
       <div className="pointer-events-none relative min-w-0 flex-1">
-        <h3 className="leading-snug font-semibold">{item.name}</h3>
+        <h3 className="leading-snug font-semibold transition-colors group-hover:text-basil-dark">{item.name}</h3>
         {item.description && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted">{item.description}</p>}
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
           <Price item={item} />
@@ -279,17 +301,28 @@ function ItemRow({
         </div>
       </div>
       <div className="relative shrink-0">
-        <FoodImage src={item.image_url} alt={item.name} className="pointer-events-none size-26 rounded-2xl sm:size-28" />
+        <FoodImage
+          src={item.image_url}
+          alt={item.name}
+          sizes="112px"
+          eager={index >= 0 && index < 8}
+          className="pointer-events-none size-26 rounded-2xl sm:size-28"
+          imgClassName={item.in_stock ? "group-hover:scale-[1.07]" : "grayscale"}
+        />
         {item.in_stock && canOrder && (
           <button
-            onClick={onAdd}
+            onClick={() => {
+              onAdd();
+              setFlash((f) => f + 1);
+            }}
             className={clsx(
-              "absolute -right-1.5 -bottom-1.5 z-10 grid h-9 min-w-9 place-items-center rounded-full border-2 border-paper px-2 text-sm font-bold shadow-lift transition active:scale-90",
-              inCart ? "bg-basil text-paper" : "bg-paper text-ink"
+              "absolute -right-1.5 -bottom-1.5 z-10 grid h-9 min-w-9 place-items-center rounded-full border-2 border-paper px-2 text-sm font-bold shadow-lift transition-[transform,background-color] duration-200 hover:scale-110 active:scale-90",
+              inCart ? "bg-basil text-paper" : "bg-paper text-ink hover:bg-ink hover:text-paper"
             )}
             aria-label={`Add ${item.name} to cart`}
           >
-            {inCart ? inCart : <Plus className="size-5" strokeWidth={2.5} />}
+            {flash > 0 && <span key={flash} className="pointer-events-none absolute inset-0 rounded-full animate-ping-once" />}
+            {inCart ? <span key={inCart} className="animate-pop tabular-nums">{inCart}</span> : <Plus className="size-5" strokeWidth={2.5} />}
           </button>
         )}
       </div>

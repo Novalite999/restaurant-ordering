@@ -33,7 +33,7 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin/ord
               <Link
                 key={v}
                 href={v === "live" ? "/admin/orders" : "/admin/orders?view=all"}
-                className={clsx("rounded-full px-4 py-1.5 text-sm font-semibold", view === v ? "bg-ink text-paper" : "text-muted")}
+                className={clsx("press rounded-full px-4 py-1.5 text-sm font-semibold transition-colors duration-200", view === v ? "bg-ink text-paper" : "text-muted hover:text-ink")}
               >
                 {v === "live" ? "Kitchen" : "All orders"}
               </Link>
@@ -69,7 +69,7 @@ async function Board() {
             </div>
             <div className="space-y-4">
               {list.length === 0 && (
-                <p className="rounded-2xl border-2 border-dashed border-line px-4 py-8 text-center text-sm text-muted">No tickets</p>
+                <p className="rounded-2xl border-2 border-dashed border-line px-4 py-8 text-center text-sm text-muted animate-fade-in">No tickets</p>
               )}
               {list.map((o) => (
                 <Ticket key={o.id} o={o} items={byOrder.get(o.id) ?? []} />
@@ -86,7 +86,7 @@ function Ticket({ o, items }: { o: Order; items: OrderItem[] }) {
   const mins = Math.round((Date.now() - new Date(o.paid_at ?? o.created_at).getTime()) / 60000);
   const late = o.status === "new" ? mins >= 5 : o.status === "preparing" ? mins >= 30 : false;
   return (
-    <article className="ticket-edge bg-paper pb-6 shadow-lift">
+    <article className="ticket-edge lift animate-slide-in bg-paper pb-6 shadow-lift">
       <Link href={`/admin/orders/${o.id}`} className="block px-4 pt-4">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -201,7 +201,7 @@ async function AllOrders({ sp }: { sp: Record<string, string | string[] | undefi
               </thead>
               <tbody className="divide-y divide-line">
                 {list.map((o) => (
-                  <tr key={o.id} className="hover:bg-mist/60">
+                  <tr key={o.id} className="transition-colors duration-150 hover:bg-mist/60">
                     <td className="px-4 py-3">
                       <Link href={`/admin/orders/${o.id}`} className="font-display font-bold hover:underline">
                         #{o.order_number}
