@@ -5,10 +5,11 @@ import Link from "next/link";
 import { Clock, MapPin, Plus, Search, Truck, X } from "lucide-react";
 import clsx from "clsx";
 import type { Category, PublicMenuItem, Settings } from "@/lib/types";
-import { money, percentOff } from "@/lib/format";
+import { money } from "@/lib/format";
 import { FoodImage, Price, Tag } from "./bits";
 import { useCart } from "./cart";
 import { ItemSheet } from "./item-sheet";
+import { FeaturedCarousel } from "./featured-carousel";
 import { CartLines, EmptyCart } from "./cart-lines";
 import { toast } from "sonner";
 
@@ -144,35 +145,7 @@ export function MenuView({
         {!q && featured.length > 0 && (
           <section className="pt-6">
             <h2 className="px-4 font-display text-xl font-bold tracking-tight lg:px-0">Today&apos;s favorites</h2>
-            <div className="no-scrollbar mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 lg:px-0">
-              {featured.map((i, idx) => (
-                <button
-                  key={i.id}
-                  onClick={() => setOpen(i)}
-                  style={{ "--i": idx + 3 } as React.CSSProperties}
-                  className="reveal lift press group relative w-[74%] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[var(--radius-card)] bg-ink text-left text-paper sm:w-[300px]"
-                >
-                  <FoodImage
-                    src={i.image_url}
-                    alt={i.name}
-                    sizes="300px"
-                    eager={idx < 2}
-                    className="aspect-[4/3] w-full"
-                    imgClassName="group-hover:scale-[1.06]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/25 to-transparent transition-opacity duration-300 group-hover:opacity-90" />
-                  {percentOff(i) > 0 && (
-                    <span className="absolute top-3 left-3 rounded-full bg-mustard px-2.5 py-1 text-xs font-bold text-ink">
-                      Save {percentOff(i)}%
-                    </span>
-                  )}
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <p className="font-display text-lg leading-tight font-bold">{i.name}</p>
-                    <Price item={i} className="mt-1 [&_s]:text-paper/60 [&>span:first-child]:text-mustard" />
-                  </div>
-                </button>
-              ))}
-            </div>
+            <FeaturedCarousel items={featured} onOpen={setOpen} />
           </section>
         )}
 
